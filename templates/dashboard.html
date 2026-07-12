@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - NetGaming Admin{% endblock %}
+{% block header_title %}Dashboard Ringkasan{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Row 1 KPI -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-custom card-stats mb-4">
+            <div class="card-body">
+                <div class="stat-label">Total Komputer</div>
+                <div class="stat-value">{{ stats.total_komputer }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-custom card-stats stats-success mb-4">
+            <div class="card-body">
+                <div class="stat-label">Komputer Tersedia</div>
+                <div class="stat-value">{{ stats.komputer_tersedia }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-custom card-stats stats-danger mb-4">
+            <div class="card-body">
+                <div class="stat-label">Sedang Digunakan</div>
+                <div class="stat-value">{{ stats.komputer_digunakan }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-custom card-stats mb-4">
+            <div class="card-body">
+                <div class="stat-label">Total Pelanggan</div>
+                <div class="stat-value">{{ stats.total_pelanggan }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Row 2 KPI -->
+    <div class="col-xl-4 col-md-6">
+        <div class="card card-custom card-stats mb-4">
+            <div class="card-body">
+                <div class="stat-label">Total Transaksi</div>
+                <div class="stat-value">{{ stats.total_transaksi }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6">
+        <div class="card card-custom card-stats stats-success mb-4">
+            <div class="card-body">
+                <div class="stat-label">Pendapatan Hari Ini</div>
+                <div class="stat-value">{{ stats.pendapatan_hari_ini | rupiah }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-12">
+        <div class="card card-custom card-stats mb-4">
+            <div class="card-body">
+                <div class="stat-label">Pendapatan Keseluruhan</div>
+                <div class="stat-value">{{ stats.pendapatan_keseluruhan | rupiah }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaksi Terbaru -->
+<div class="row mt-2">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="m-0 fw-bold">Transaksi Terbaru</h5>
+                <a href="{{ url_for('penyewaan.index') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Sewa Baru</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom m-0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Pelanggan</th>
+                                <th>Komputer</th>
+                                <th>Durasi</th>
+                                <th>Biaya</th>
+                                <th>Tanggal & Waktu</th>
+                                <th>Status</th>
+                                <th class="text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trx in transaksi_terbaru %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <span class="fw-semibold">{{ trx.pelanggan.nama_pelanggan }}</span><br>
+                                    <small class="text-muted">{{ trx.pelanggan.nomor_pelanggan }} ({{ trx.pelanggan.jenis_pelanggan }})</small>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">{{ trx.komputer.nomor_pc }}</span><br>
+                                    <small class="text-muted">{{ trx.komputer.nama_pc }}</small>
+                                </td>
+                                <td>{{ trx.durasi }} jam</td>
+                                <td>
+                                    <span class="fw-semibold text-primary">{{ trx.total_biaya | rupiah }}</span><br>
+                                    <small class="text-muted">{{ trx.tarif_per_jam | rupiah }}/jam</small>
+                                </td>
+                                <td>{{ trx.waktu_transaksi | datetime_format }}</td>
+                                <td>
+                                    {% if trx.status == 'Aktif' %}
+                                    <span class="badge badge-digunakan">Aktif</span>
+                                    {% else %}
+                                    <span class="badge badge-tersedia">Selesai</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('transaksi.detail', id=trx.id) }}" class="btn btn-outline-secondary btn-sm me-1" title="Detail"><i class="bi bi-eye"></i></a>
+                                    {% if trx.status == 'Aktif' %}
+                                    <form action="{{ url_for('transaksi.selesai', id=trx.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin menyelesaikan sesi sewa ini?')">
+                                            <i class="bi bi-check-circle"></i> Selesai
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">Belum ada transaksi terbaru</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

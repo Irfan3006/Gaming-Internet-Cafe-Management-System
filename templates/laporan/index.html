@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Laporan Pendapatan - NetGaming Admin{% endblock %}
+{% block header_title %}Laporan Pendapatan & Grafik{% endblock %}
+
+{% block content %}
+<!-- Filter Card -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-body">
+                <form action="{{ url_for('laporan.index') }}" method="GET" class="row align-items-end g-3">
+                    <div class="col-md-4 col-sm-12">
+                        <label for="start_date" class="form-label fw-medium">Tanggal Mulai</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <label for="end_date" class="form-label fw-medium">Tanggal Selesai</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                    </div>
+                    <div class="col-md-4 col-sm-12 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-filter"></i> Filter</button>
+                        <a href="{{ url_for('laporan.index') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> Reset</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Laporan KPI Summary -->
+<div class="row">
+    <div class="col-md-6 col-sm-12 mb-4">
+        <div class="card card-custom card-stats stats-success">
+            <div class="card-body">
+                <div class="stat-label">Total Pendapatan Terfilter</div>
+                <div class="stat-value">{{ laporan.total_pendapatan | rupiah }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 mb-4">
+        <div class="card card-custom card-stats">
+            <div class="card-body">
+                <div class="stat-label">Jumlah Transaksi Terfilter</div>
+                <div class="stat-value">{{ laporan.jumlah_transaksi }} transaksi</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart & History Grid -->
+<div class="row">
+    <!-- Chart.js line graph -->
+    <div class="col-xl-8 col-md-12 mb-4">
+        <div class="card card-custom h-100">
+            <div class="card-header">
+                <h5 class="m-0 fw-bold">Grafik Tren Pendapatan</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 320px; width: 100%;">
+                    <!-- Menyimpan data serialisasi JSON ke attribute HTML untuk diparsing di script.js -->
+                    <canvas id="revenueChart" data-chart-value='{{ laporan.riwayat | tojson }}'></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Breakdown List -->
+    <div class="col-xl-4 col-md-12 mb-4">
+        <div class="card card-custom h-100">
+            <div class="card-header">
+                <h5 class="m-0 fw-bold">Riwayat Harian</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 350px; overflow-y: auto;">
+                <ul class="list-group list-group-flush">
+                    {% for item in laporan.riwayat %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span class="fw-semibold text-dark">{{ item.tanggal }}</span>
+                        <span class="fw-bold text-primary">{{ item.pendapatan | rupiah }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center py-4 text-muted">Tidak ada data pendapatan dalam periode ini</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
