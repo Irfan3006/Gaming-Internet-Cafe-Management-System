@@ -26,7 +26,6 @@ def index():
             flash(f'Gagal melakukan penyewaan: {str(e)}', 'danger')
             return redirect(url_for('penyewaan.index'))
 
-    # Ambil list pelanggan dan list komputer yang hanya berstatus 'Tersedia'
     list_pelanggan = warnet.get_semua_pelanggan()
     list_komputer = [c for c in warnet.get_semua_komputer() if c.status == 'Tersedia']
     return render_template('penyewaan/index.html', list_pelanggan=list_pelanggan, list_komputer=list_komputer)

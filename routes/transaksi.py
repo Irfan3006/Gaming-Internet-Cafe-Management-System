@@ -26,7 +26,6 @@ def selesai(id):
     except Exception as e:
         flash(f'Gagal menyelesaikan sewa: {str(e)}', 'danger')
     
-    # Redirect ke halaman asal jika memungkinkan
     ref = request.referrer
     if ref and 'transaksi' in ref:
         return redirect(url_for('transaksi.index'))

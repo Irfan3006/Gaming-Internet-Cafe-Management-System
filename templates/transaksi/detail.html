@@ -6,17 +6,47 @@
 {% block content %}
 <div class="row">
     <div class="col-md-8 col-sm-12">
-        <div class="card card-custom">
+        <style>
+            @media print {
+                /* Hide sidebar, header title, and everything else */
+                body * {
+                    visibility: hidden;
+                }
+                /* Show only the invoice section */
+                #invoice-print-area, #invoice-print-area * {
+                    visibility: visible;
+                }
+                /* Align print area to top-left of page */
+                #invoice-print-area {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    border: none !important;
+                    box-shadow: none !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                /* Hide print buttons and back buttons when printing */
+                .btn-print-no-show, .no-print {
+                    display: none !important;
+                }
+            }
+        </style>
+        <div class="card card-custom" id="invoice-print-area">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                 <h5 class="m-0 fw-bold"><i class="bi bi-file-earmark-text text-primary"></i> Invoice Transaksi</h5>
-                {% if transaksi.status == 'Aktif' %}
-                <span class="badge badge-digunakan">Aktif</span>
-                {% else %}
-                <span class="badge badge-tersedia">Selesai</span>
-                {% endif %}
+                <div>
+                    <button onclick="window.print()" class="btn btn-outline-primary btn-sm me-2 btn-print-no-show"><i class="bi bi-printer"></i> Cetak Struk</button>
+                    {% if transaksi.status == 'Aktif' %}
+                    <span class="badge badge-digunakan">Aktif</span>
+                    {% else %}
+                    <span class="badge badge-tersedia">Selesai</span>
+                    {% endif %}
+                </div>
             </div>
             <div class="card-body">
-                <!-- Detil Atas -->
+                
                 <div class="row mb-4">
                     <div class="col-6">
                         <span class="text-muted small">DISewa OLEH</span>
@@ -33,7 +63,7 @@
 
                 <hr>
 
-                <!-- Detil Item Komputer -->
+                
                 <div class="row my-4">
                     <div class="col-12">
                         <span class="text-muted small">DETAIL PEMAKAIAN</span>
@@ -51,7 +81,7 @@
 
                 <hr>
 
-                <!-- Perincian Harga -->
+                
                 <div class="row justify-content-end my-4">
                     <div class="col-md-6 col-12">
                         <div class="d-flex justify-content-between mb-2">
@@ -76,8 +106,8 @@
                     </div>
                 </div>
 
-                <!-- Tombol Aksi -->
-                <div class="d-flex justify-content-between mt-4">
+                
+                <div class="d-flex justify-content-between mt-4 no-print">
                     <a href="{{ url_for('transaksi.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
                     {% if transaksi.status == 'Aktif' %}
                     <form action="{{ url_for('transaksi.selesai', id=transaksi.id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyelesaikan sesi sewa ini?')">

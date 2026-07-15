@@ -1,10 +1,8 @@
 import os
 
 class Config:
-    # Key untuk session flask
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'kunci-rahasia-sistem-warnet-oop-2026'
 
-    # Konfigurasi Koneksi MySQL Laragon
     MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'localhost'
     MYSQL_PORT = int(os.environ.get('MYSQL_PORT') or 3306)
     MYSQL_USER = os.environ.get('MYSQL_USER') or 'root'

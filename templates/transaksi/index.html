@@ -11,6 +11,14 @@
                 <h5 class="m-0 fw-bold">Daftar Transaksi</h5>
             </div>
             <div class="card-body p-0">
+                <div class="p-3 border-bottom bg-light">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="table-search" class="form-control border-start-0 ps-0" placeholder="Cari nama pelanggan, nomor PC, biaya, durasi, tanggal, atau status...">
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-custom m-0">
                         <thead>
@@ -73,4 +81,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('table-search').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('table tbody tr');
+        
+        rows.forEach(row => {
+            if (row.cells.length === 1 && row.cells[0].getAttribute('colspan')) {
+                return;
+            }
+            
+            const textContent = row.textContent.toLowerCase();
+            if (textContent.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% endblock %}

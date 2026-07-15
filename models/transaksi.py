@@ -11,7 +11,6 @@ class Transaksi:
         self._waktu_transaksi = waktu_transaksi or datetime.now()
         self._status = status
 
-    # Getter-getter untuk atribut terenkapsulasi
     @property
     def id(self):
         return self._id
@@ -44,10 +43,8 @@ class Transaksi:
     def status(self):
         return self._status
 
-    # Selesaikan transaksi (Encapsulation logic)
     def selesaikan(self):
         if self._status == "Selesai":
             raise ValueError("Transaksi sudah berstatus selesai")
         self._status = "Selesai"
-        # Ubah status komputer asosiasi kembali menjadi Tersedia
         self._komputer.ubah_status("Tersedia")

@@ -13,14 +13,15 @@ def tambah():
     if request.method == 'POST':
         nomor_pc = request.form.get('nomor_pc', '').strip()
         nama_pc = request.form.get('nama_pc', '').strip()
+        spesifikasi = request.form.get('spesifikasi', '').strip()
         
-        if not nomor_pc or not nama_pc:
+        if not nomor_pc or not nama_pc or not spesifikasi:
             flash('Semua data harus diisi', 'danger')
             return render_template('komputer/tambah.html')
 
         warnet = current_app.warnet_system
         try:
-            warnet.tambah_komputer(nomor_pc, nama_pc)
+            warnet.tambah_komputer(nomor_pc, nama_pc, spesifikasi)
             flash('Komputer baru berhasil ditambahkan', 'success')
             return redirect(url_for('komputer.index'))
         except Exception as e:
@@ -40,13 +41,14 @@ def edit(id):
         nomor_pc = request.form.get('nomor_pc', '').strip()
         nama_pc = request.form.get('nama_pc', '').strip()
         status = request.form.get('status', '').strip()
+        spesifikasi = request.form.get('spesifikasi', '').strip()
 
-        if not nomor_pc or not nama_pc or not status:
+        if not nomor_pc or not nama_pc or not status or not spesifikasi:
             flash('Semua data harus diisi', 'danger')
             return render_template('komputer/edit.html', komputer=komputer)
 
         try:
-            warnet.edit_komputer(id, nomor_pc, nama_pc, status)
+            warnet.edit_komputer(id, nomor_pc, nama_pc, status, spesifikasi)
             flash('Data komputer berhasil diperbarui', 'success')
             return redirect(url_for('komputer.index'))
         except Exception as e:

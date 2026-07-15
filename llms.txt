@@ -1,0 +1,12 @@
+# NetGaming Cafe System
+
+Esports Arena & Premium Internet Cafe Management System built on Python Flask, MySQL, and OOP principles.
+
+## Features
+- Real-time PC availability monitoring (RTX 5090/5080)
+- Protective session auth for administrative management
+- Customer CRUD with Gen Z fully unique naming sets
+- Automated rental sessions with Member (Rp 7,000/hr) vs Standard (Rp 8,000/hr) tariff calculator
+- Tom Select search-integrated select forms
+- Live analytics with Chart.js reporting & PDF document exports
+- Auto-standby session release scanner
