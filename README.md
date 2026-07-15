@@ -14,18 +14,22 @@ Aplikasi ini dikembangkan oleh:
 ## Fitur Utama Aplikasi
 
 1. **Dashboard Admin**: Menyajikan metrik operasional secara real-time (total komputer, ketersediaan komputer, sesi aktif, jumlah pelanggan, total transaksi, serta tren pendapatan harian).
-2. **Manajemen Komputer (CRUD)**: Mengelola data unit komputer (nomor PC, nama/spesifikasi PC, dan status penggunaan).
-3. **Manajemen Pelanggan (CRUD)**: Mengelola data pelanggan dengan pembagian kategori antara Pelanggan Biasa dan Member.
-4. **Transaksi Penyewaan**: Memproses sesi sewa baru dengan pemilihan pelanggan dan komputer yang tersedia, serta penentuan durasi sewa.
-5. **Kalkulasi Biaya Real-Time (AJAX)**: Menghitung biaya sewa secara instan pada antarmuka pengguna sebelum transaksi disimpan ke basis data.
-6. **Penyelesaian Sesi Sewa**: Menyelesaikan sesi penggunaan komputer secara dinamis yang otomatis mengubah status transaksi menjadi Selesai dan mengembalikan status komputer menjadi Tersedia.
-7. **Laporan Pendapatan**: Menyediakan pencarian data berdasarkan filter tanggal serta visualisasi grafik tren pendapatan menggunakan Chart.js.
+2. **Ketersediaan PC (Visual Grid Map)**: Visualisasi peta tata letak unit komputer secara real-time di beranda dashboard admin (Warna hijau untuk standby, merah untuk digunakan beserta nama pengguna dan sisa waktu).
+3. **5 Komputer Terpopuler**: Peringkat unit komputer yang paling sering disewa beserta total jam operasional dan pendapatan yang dihasilkan unit tersebut di halaman laporan.
+4. **Ekspor Laporan PDF**: Tombol unduhan dokumen laporan PDF A4 yang bersih dan rapi di beranda dashboard dan laporan analitik.
+5. **Cetak Struk Transaksi**: Cetak invoice detail transaksi sewa dengan penyesuaian CSS media query khusus printer thermal.
+6. **Auto-standby Sesi Habis**: Otomatis melepaskan status transaksi sewa dan unit komputer dari "Digunakan" kembali ke "Tersedia" segera setelah durasi sewa berakhir.
+7. **Pencarian Terpadu Dropdown (Tom Select)**: Form input penyewaan baru yang modern dengan kolom pencarian internal di dalam dropdown pemilih pelanggan dan komputer.
+8. **Manajemen Komputer (CRUD)**: Mengelola data unit komputer (nomor PC, kategori/spesifikasi RTX 50, dan status penggunaan).
+9. **Manajemen Pelanggan (CRUD)**: Mengelola data pelanggan dengan pembagian kategori antara Pelanggan Biasa dan Member menggunakan daftar nama lengkap unik khas Gen Z.
+10. **Transaksi Penyewaan & Kalkulator Real-Time**: Kalkulasi harga live menggunakan AJAX sebelum transaksi disimpan ke basis data.
+11. **Optimasi SEO & AI**: Sitemap.xml, robots.txt, llms.txt, Open Graph (OG) tags, dan JSON-LD Structured Data Schema.
 
 ## Teknologi yang Digunakan
 
 * **Backend**: Python Flask
 * **Database**: MySQL (diakses melalui modul PyMySQL)
-* **Frontend**: HTML, CSS, JavaScript (Bootstrap 5 & Bootstrap Icons)
+* **Frontend**: HTML, CSS, JavaScript (Bootstrap 5, Bootstrap Icons, Tom Select, html2pdf.js)
 * **Visualisasi Grafik**: Chart.js
 
 ## Panduan Instalasi dan Menjalankan Aplikasi
@@ -73,8 +77,8 @@ Setiap atribut pada objek dilindungi menggunakan tanda baris bawah (`_`) dan dia
 
 ### 4. Polymorphism (Polimorfisme)
 * Polimorfisme diimplementasikan melalui metode `hitung_biaya(durasi)`.
-* Objek `Pelanggan` reguler menghitung biaya sewa dengan tarif Rp 5.000 per jam.
-* Objek `Member` menghitung biaya sewa dengan tarif potongan khusus Rp 4.500 per jam.
+* Objek `Pelanggan` reguler menghitung biaya sewa dengan tarif Rp 8.000 per jam.
+* Objek `Member` menghitung biaya sewa dengan tarif potongan khusus Rp 7.000 per jam.
 * Saat sistem memanggil `pelanggan.hitung_biaya(durasi)` di kelas `Warnet`, hasil perhitungan otomatis menyesuaikan instans objek pelanggan terkait secara dinamis.
 
 ### 5. Abstraction (Abstraksi)
