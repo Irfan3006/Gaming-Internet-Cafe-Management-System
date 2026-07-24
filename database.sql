@@ -34,22 +34,27 @@ CREATE TABLE transaksi (
     FOREIGN KEY (id_komputer) REFERENCES komputer(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO komputer (nomor_pc, nama_pc, status) VALUES
-('PC-01', 'Gaming PC Elite 1', 'Tersedia'),
-('PC-02', 'Gaming PC Elite 2', 'Tersedia'),
-('PC-03', 'Gaming PC Pro 1', 'Tersedia'),
-('PC-04', 'Gaming PC Pro 2', 'Tersedia'),
-('PC-05', 'Streaming PC 1', 'Tersedia'),
-('PC-06', 'Streaming PC 2', 'Tersedia'),
-('PC-07', 'VIP Gaming PC 1', 'Tersedia'),
-('PC-08', 'VIP Gaming PC 2', 'Tersedia'),
-('PC-09', 'E-Sports Arena 1', 'Tersedia'),
-('PC-10', 'E-Sports Arena 2', 'Tersedia'),
-('PC-11', 'Gaming PC Pro 3', 'Tersedia'),
-('PC-12', 'Gaming PC Pro 4', 'Tersedia'),
-('PC-13', 'Simulator PC 1', 'Tersedia'),
-('PC-14', 'Reguler PC 1', 'Tersedia'),
-('PC-15', 'Reguler PC 2', 'Tersedia');
+INSERT INTO komputer (nomor_pc, nama_pc, spesifikasi, status) VALUES
+('PC-01', 'Gaming PC Elite 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-02', 'Gaming PC Elite 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-03', 'Gaming PC Pro 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-04', 'Gaming PC Pro 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-05', 'Streaming PC 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-06', 'Streaming PC 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-07', 'VIP Gaming PC 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-08', 'VIP Gaming PC 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-09', 'E-Sports Arena 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-10', 'E-Sports Arena 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-11', 'Gaming PC Pro 3', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-12', 'Gaming PC Pro 4', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-13', 'Simulator PC 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-14', 'Reguler PC 1', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-15', 'Reguler PC 2', 'RTX 4060, Ryzen 5, 16GB RAM, 165Hz', 'Tersedia'),
+('PC-16', 'Godlike Gaming Station 1', 'RTX 5090, Ryzen 9 9950X, 64GB DDR5, 360Hz OLED', 'Tersedia'),
+('PC-17', 'Godlike Gaming Station 2', 'RTX 5090, Ryzen 9 9950X, 64GB DDR5, 360Hz OLED', 'Tersedia'),
+('PC-18', 'Ultra Esports Arena 3', 'RTX 5080, Intel Core i9-14900KS, 32GB DDR5, 240Hz', 'Tersedia'),
+('PC-19', 'Ultra Esports Arena 4', 'RTX 5080, Intel Core i9-14900KS, 32GB DDR5, 240Hz', 'Tersedia'),
+('PC-20', 'VIP Motion Simulator Rig', 'RTX 5090, Ryzen 9 7950X3D, 64GB DDR5, Triple 4K OLED', 'Tersedia');
 
 INSERT INTO pelanggan (nama_pelanggan, nomor_pelanggan, jenis_pelanggan) VALUES
 ('Irfan Syarifudin', 'PLG-001', 'Biasa'),
