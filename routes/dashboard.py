@@ -15,7 +15,8 @@ def index():
     stats = warnet.get_statistik()
     transaksi_terbaru = warnet.get_transaksi_terbaru(5)
     list_komputer = warnet.get_status_komputer_lengkap()
-    return render_template('dashboard.html', stats=stats, transaksi_terbaru=transaksi_terbaru, list_komputer=list_komputer)
+    log_terbaru = warnet.get_semua_log(limit=6)
+    return render_template('dashboard.html', stats=stats, transaksi_terbaru=transaksi_terbaru, list_komputer=list_komputer, log_terbaru=log_terbaru)
 
 @dashboard_bp.route('/simpan-kontak', methods=['POST'])
 def simpan_kontak():
@@ -56,6 +57,8 @@ def login():
         if username == 'admin' and password == 'admin':
             session['logged_in'] = True
             session['username'] = 'admin'
+            warnet = current_app.warnet_system
+            warnet.catat_log('admin', 'LOGIN', 'Auth', 'Administrator berhasil login ke sistem', request.remote_addr)
             return redirect(url_for('dashboard.index'))
         else:
             error = 'Username atau Password salah!'
@@ -64,6 +67,9 @@ def login():
 
 @dashboard_bp.route('/logout')
 def logout():
+    warnet = current_app.warnet_system
+    if session.get('logged_in'):
+        warnet.catat_log(session.get('username', 'admin'), 'LOGOUT', 'Auth', 'Administrator keluar dari sistem', request.remote_addr)
     session.pop('logged_in', None)
     session.pop('username', None)
     return redirect(url_for('dashboard.landing'))

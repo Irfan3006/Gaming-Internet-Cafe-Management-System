@@ -208,6 +208,46 @@
     </div>
 </div>
 
+<div class="row mt-4 mb-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <h5 class="m-0 fw-bold"><i class="bi bi-shield-check text-primary me-2"></i> Log Aktivitas Admin Terbaru</h5>
+                <a href="{{ url_for('log.index') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold">
+                    Lihat Semua Log <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for log in log_terbaru %}
+                    <div class="list-group-item d-flex align-items-center justify-content-between p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge {% if log.kategori == 'Auth' %}bg-primary{% elif log.kategori == 'Komputer' %}bg-info text-dark{% elif log.kategori == 'Pelanggan' %}bg-success{% elif log.kategori == 'Sewa' %}bg-warning text-dark{% elif log.kategori == 'Kontak' %}bg-secondary{% else %}bg-dark{% endif %} rounded-pill px-3 py-2" style="font-size: 0.75rem;">
+                                {{ log.kategori }}
+                            </span>
+                            <div>
+                                <div class="fw-semibold text-dark mb-1" style="font-size: 0.9rem;">
+                                    <span class="badge bg-light text-dark border me-1">{{ log.aksi }}</span> {{ log.deskripsi }}
+                                </div>
+                                <div class="small text-muted" style="font-size: 0.78rem;">
+                                    <i class="bi bi-person-fill text-secondary me-1"></i> {{ log.admin_username }} 
+                                    {% if log.ip_address %}<span class="mx-1">•</span> <i class="bi bi-hdd-network me-1"></i> {{ log.ip_address }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end text-muted small" style="font-size: 0.8rem;">
+                            <i class="bi bi-clock me-1"></i> {{ log.waktu | datetime_format }}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">Belum ada riwayat aktivitas admin.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div id="pdf-report-template" style="display: none;">
     <div style="padding: 40px; font-family: 'Segoe UI', system-ui, sans-serif; color: #1e293b; background-color: #ffffff;">

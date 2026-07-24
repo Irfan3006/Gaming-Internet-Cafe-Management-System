@@ -7,7 +7,8 @@ from routes import (
     pelanggan_bp,
     penyewaan_bp,
     transaksi_bp,
-    laporan_bp
+    laporan_bp,
+    log_bp
 )
 from datetime import datetime
 
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(penyewaan_bp)
     app.register_blueprint(transaksi_bp)
     app.register_blueprint(laporan_bp)
+    app.register_blueprint(log_bp)
 
     @app.template_filter('rupiah')
     def rupiah_filter(value):

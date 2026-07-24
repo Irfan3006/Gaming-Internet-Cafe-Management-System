@@ -102,3 +102,22 @@ CREATE TABLE kontak (
 INSERT INTO kontak (nama, email, subjek, pesan, waktu_kirim) VALUES
 ('Rudi Hermawan', 'rudi@gmail.com', 'Saran Spesifikasi', 'Tolong tambahkan headphone gaming di PC-05.', DATE_SUB(NOW(), INTERVAL 1 DAY)),
 ('Anisa Rahma', 'anisa@yahoo.com', 'Tanya Paket Member', 'Apakah ada paket bergadang untuk member?', DATE_SUB(NOW(), INTERVAL 2 DAY));
+
+DROP TABLE IF EXISTS log_aktivitas;
+
+CREATE TABLE log_aktivitas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_username VARCHAR(50) DEFAULT 'admin',
+    aksi VARCHAR(100) NOT NULL,
+    kategori ENUM('Auth', 'Komputer', 'Pelanggan', 'Sewa', 'Kontak', 'Sistem') NOT NULL,
+    deskripsi TEXT NOT NULL,
+    ip_address VARCHAR(45) DEFAULT NULL,
+    waktu TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO log_aktivitas (admin_username, aksi, kategori, deskripsi, ip_address, waktu) VALUES
+('admin', 'LOGIN', 'Auth', 'Administrator berhasil login ke sistem', '127.0.0.1', DATE_SUB(NOW(), INTERVAL 3 HOUR)),
+('admin', 'MULAI_SEWA', 'Sewa', 'Memulai sewa PC-03 untuk Riyan Antony (2 jam)', '127.0.0.1', DATE_SUB(NOW(), INTERVAL 2 HOUR)),
+('admin', 'TAMBAH_PELANGGAN', 'Pelanggan', 'Menambahkan pelanggan baru: Gita Gutawa (PLG-015)', '127.0.0.1', DATE_SUB(NOW(), INTERVAL 1 HOUR)),
+('admin', 'TAMBAH_KOMPUTER', 'Komputer', 'Menambahkan unit VIP PC baru: VIP Motion Simulator Rig (PC-20)', '127.0.0.1', DATE_SUB(NOW(), INTERVAL 30 MINUTE));
+

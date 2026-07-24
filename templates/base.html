@@ -43,6 +43,9 @@
                 <li class="{% if request.endpoint == 'dashboard.kontak_index' %}active{% endif %}">
                     <a href="{{ url_for('dashboard.kontak_index') }}"><i class="bi bi-envelope"></i> Pesan Kontak</a>
                 </li>
+                <li class="{% if request.blueprint == 'log' %}active{% endif %}">
+                    <a href="{{ url_for('log.index') }}"><i class="bi bi-shield-check"></i> Log Aktivitas</a>
+                </li>
             </ul>
         </nav>
 

@@ -82,10 +82,44 @@ class BaseWarnet(ABC):
     def hapus_kontak(self, id_kontak):
         pass
 
+    @abstractmethod
+    def catat_log(self, admin_username, aksi, kategori, deskripsi, ip_address=None):
+        pass
+
+    @abstractmethod
+    def get_semua_log(self, kategori=None, search=None, limit=100):
+        pass
+
+    @abstractmethod
+    def hapus_semua_log(self):
+        pass
+
 
 class Warnet(BaseWarnet):
     def __init__(self, db_config):
         self._db_config = db_config
+        self._init_db()
+
+    def _init_db(self):
+        connection = self._get_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS log_aktivitas (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        admin_username VARCHAR(50) DEFAULT 'admin',
+                        aksi VARCHAR(100) NOT NULL,
+                        kategori ENUM('Auth', 'Komputer', 'Pelanggan', 'Sewa', 'Kontak', 'Sistem') NOT NULL,
+                        deskripsi TEXT NOT NULL,
+                        ip_address VARCHAR(45) DEFAULT NULL,
+                        waktu TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                """)
+                connection.commit()
+        except Exception as e:
+            print(f"Error initializing log table: {e}")
+        finally:
+            connection.close()
 
     def _get_connection(self):
         return pymysql.connect(
@@ -164,6 +198,7 @@ class Warnet(BaseWarnet):
                     (temp_pc.nomor_pc, temp_pc.nama_pc, temp_pc.spesifikasi)
                 )
                 connection.commit()
+            self.catat_log('admin', 'TAMBAH_KOMPUTER', 'Komputer', f"Menambahkan unit komputer baru: {temp_pc.nama_pc} ({temp_pc.nomor_pc})")
         finally:
             connection.close()
 
@@ -185,6 +220,7 @@ class Warnet(BaseWarnet):
                     (pc.nomor_pc, pc.nama_pc, pc.status, pc.spesifikasi, pc.id)
                 )
                 connection.commit()
+            self.catat_log('admin', 'EDIT_KOMPUTER', 'Komputer', f"Memperbarui data unit {pc.nama_pc} ({pc.nomor_pc}) - Status: {pc.status}")
         finally:
             connection.close()
 
@@ -200,6 +236,7 @@ class Warnet(BaseWarnet):
             with connection.cursor() as cursor:
                 cursor.execute("DELETE FROM komputer WHERE id = %s", (id_komputer,))
                 connection.commit()
+            self.catat_log('admin', 'HAPUS_KOMPUTER', 'Komputer', f"Menghapus unit komputer {pc.nama_pc} ({pc.nomor_pc})")
         finally:
             connection.close()
 
@@ -295,6 +332,7 @@ class Warnet(BaseWarnet):
                     (temp_plg.nama_pelanggan, temp_plg.nomor_pelanggan, temp_plg.jenis_pelanggan)
                 )
                 connection.commit()
+            self.catat_log('admin', 'TAMBAH_PELANGGAN', 'Pelanggan', f"Menambahkan pelanggan baru: {temp_plg.nama_pelanggan} ({temp_plg.nomor_pelanggan} - {temp_plg.jenis_pelanggan})")
         finally:
             connection.close()
 
@@ -314,12 +352,15 @@ class Warnet(BaseWarnet):
                     (plg.nama_pelanggan, plg.nomor_pelanggan, jenis_pelanggan, id_pelanggan)
                 )
                 connection.commit()
+            self.catat_log('admin', 'EDIT_PELANGGAN', 'Pelanggan', f"Memperbarui data pelanggan {nama_pelanggan} ({nomor_pelanggan} - {jenis_pelanggan})")
         finally:
             connection.close()
 
     def hapus_pelanggan(self, id_pelanggan):
         connection = self._get_connection()
         try:
+            plg = self.get_pelanggan(id_pelanggan)
+            plg_info = f"{plg.nama_pelanggan} ({plg.nomor_pelanggan})" if plg else f"ID {id_pelanggan}"
             with connection.cursor() as cursor:
                 cursor.execute("SELECT id FROM transaksi WHERE id_pelanggan = %s AND status = 'Aktif'", (id_pelanggan,))
                 if cursor.fetchone():
@@ -327,6 +368,7 @@ class Warnet(BaseWarnet):
 
                 cursor.execute("DELETE FROM pelanggan WHERE id = %s", (id_pelanggan,))
                 connection.commit()
+            self.catat_log('admin', 'HAPUS_PELANGGAN', 'Pelanggan', f"Menghapus data pelanggan {plg_info}")
         finally:
             connection.close()
 
@@ -364,6 +406,7 @@ class Warnet(BaseWarnet):
                 )
 
                 connection.commit()
+            self.catat_log('admin', 'MULAI_SEWA', 'Sewa', f"Memulai sewa unit {komputer.nama_pc} ({komputer.nomor_pc}) untuk pelanggan {pelanggan.nama_pelanggan} ({durasi} jam, total Rp {total_biaya:,.0f})")
         except Exception as e:
             connection.rollback()
             raise e
@@ -393,6 +436,7 @@ class Warnet(BaseWarnet):
                 )
 
                 connection.commit()
+            self.catat_log('admin', 'SELESAI_SEWA', 'Sewa', f"Menyelesaikan sewa transaksi #{transaksi.id} - {transaksi.komputer.nama_pc} ({transaksi.komputer.nomor_pc}) oleh {transaksi.pelanggan.nama_pelanggan}")
         except Exception as e:
             connection.rollback()
             raise e
@@ -699,5 +743,64 @@ class Warnet(BaseWarnet):
             with connection.cursor() as cursor:
                 cursor.execute("DELETE FROM kontak WHERE id = %s", (id_kontak,))
                 connection.commit()
+            self.catat_log('admin', 'HAPUS_KONTAK', 'Kontak', f"Menghapus pesan kontak ID #{id_kontak}")
         finally:
             connection.close()
+
+    def catat_log(self, admin_username, aksi, kategori, deskripsi, ip_address=None):
+        connection = self._get_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """INSERT INTO log_aktivitas (admin_username, aksi, kategori, deskripsi, ip_address) 
+                       VALUES (%s, %s, %s, %s, %s)""",
+                    (admin_username or 'admin', aksi, kategori, deskripsi, ip_address)
+                )
+                connection.commit()
+        except Exception as e:
+            print(f"Error catat_log: {e}")
+        finally:
+            connection.close()
+
+    def get_semua_log(self, kategori=None, search=None, limit=100):
+        connection = self._get_connection()
+        logs = []
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT id, admin_username, aksi, kategori, deskripsi, ip_address, waktu FROM log_aktivitas WHERE 1=1"
+                params = []
+                if kategori and kategori.strip():
+                    sql += " AND kategori = %s"
+                    params.append(kategori.strip())
+                if search and search.strip():
+                    sql += " AND (deskripsi LIKE %s OR aksi LIKE %s OR admin_username LIKE %s)"
+                    search_param = f"%{search.strip()}%"
+                    params.extend([search_param, search_param, search_param])
+                sql += " ORDER BY waktu DESC LIMIT %s"
+                params.append(int(limit))
+                
+                cursor.execute(sql, params)
+                results = cursor.fetchall()
+                for row in results:
+                    logs.append({
+                        'id': row['id'],
+                        'admin_username': row['admin_username'],
+                        'aksi': row['aksi'],
+                        'kategori': row['kategori'],
+                        'deskripsi': row['deskripsi'],
+                        'ip_address': row['ip_address'],
+                        'waktu': row['waktu']
+                    })
+        finally:
+            connection.close()
+        return logs
+
+    def hapus_semua_log(self):
+        connection = self._get_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("TRUNCATE TABLE log_aktivitas")
+                connection.commit()
+            self.catat_log('admin', 'KOSONGKAN_LOG', 'Sistem', "Mengosongkan seluruh riwayat log aktivitas")
+        finally:
+            connection.close()
