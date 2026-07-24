@@ -748,6 +748,19 @@ class Warnet(BaseWarnet):
             connection.close()
 
     def catat_log(self, admin_username, aksi, kategori, deskripsi, ip_address=None):
+        if not ip_address:
+            try:
+                from flask import has_request_context, request
+                if has_request_context():
+                    if request.headers.get('X-Forwarded-For'):
+                        ip_address = request.headers.get('X-Forwarded-For').split(',')[0].strip()
+                    elif request.headers.get('X-Real-IP'):
+                        ip_address = request.headers.get('X-Real-IP').strip()
+                    elif request.remote_addr:
+                        ip_address = request.remote_addr
+            except Exception:
+                pass
+
         connection = self._get_connection()
         try:
             with connection.cursor() as cursor:
