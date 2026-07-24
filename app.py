@@ -10,7 +10,7 @@ from routes import (
     laporan_bp,
     log_bp
 )
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def create_app():
     app = Flask(__name__)
@@ -39,13 +39,23 @@ def create_app():
     def datetime_format_filter(value):
         if not value:
             return ""
+        
+        dt = None
         if isinstance(value, str):
             try:
-                value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             except ValueError:
-                return f"{value} WIB" if "WIB" not in str(value) else value
-        if hasattr(value, 'strftime'):
-            return f"{value.strftime('%d/%m/%Y %H:%M')} WIB"
+                try:
+                    dt = datetime.fromisoformat(value)
+                except ValueError:
+                    return f"{value} WIB" if "WIB" not in str(value) else value
+        elif isinstance(value, datetime):
+            dt = value
+
+        if dt:
+            dt_wib = dt + timedelta(hours=7)
+            return f"{dt_wib.strftime('%d/%m/%Y %H:%M')} WIB"
+
         return f"{value} WIB"
 
     @app.before_request
