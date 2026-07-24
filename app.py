@@ -43,8 +43,10 @@ def create_app():
             try:
                 value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             except ValueError:
-                return value
-        return value.strftime("%d/%m/%Y %H:%M")
+                return f"{value} WIB" if "WIB" not in str(value) else value
+        if hasattr(value, 'strftime'):
+            return f"{value.strftime('%d/%m/%Y %H:%M')} WIB"
+        return f"{value} WIB"
 
     @app.before_request
     def check_login():
