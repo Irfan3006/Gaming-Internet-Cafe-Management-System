@@ -14,11 +14,15 @@
                 <form action="{{ url_for('pelanggan.tambah') }}" method="POST">
                     <div class="mb-3">
                         <label for="nama_pelanggan" class="form-label fw-medium">Nama Pelanggan</label>
-                        <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" placeholder="Contoh: Ahmad Dhani" required>
+                        <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" placeholder="Contoh: Ahmad Dhani" required autofocus>
                     </div>
                     <div class="mb-3">
-                        <label for="nomor_pelanggan" class="form-label fw-medium">Nomor Pelanggan</label>
-                        <input type="text" class="form-control" id="nomor_pelanggan" name="nomor_pelanggan" placeholder="Contoh: PLG-005" required>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="nomor_pelanggan" class="form-label fw-medium m-0">Nomor Pelanggan</label>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small">Otomatis Terisi & Unik</span>
+                        </div>
+                        <input type="text" class="form-control fw-bold text-primary" id="nomor_pelanggan" name="nomor_pelanggan" value="{{ next_nomor_pelanggan }}" required readonly style="background-color: #f8f9fa;">
+                        <div class="form-text">Nomor pelanggan dibuat secara otomatis oleh sistem agar tidak terjadi tabrakan data.</div>
                     </div>
                     <div class="mb-3">
                         <label for="jenis_pelanggan" class="form-label fw-medium">Jenis Pelanggan</label>

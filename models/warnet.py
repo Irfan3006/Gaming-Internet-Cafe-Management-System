@@ -47,6 +47,10 @@ class BaseWarnet(ABC):
         pass
 
     @abstractmethod
+    def generate_nomor_pelanggan(self):
+        pass
+
+    @abstractmethod
     def hapus_pelanggan(self, id_pelanggan):
         pass
 
@@ -231,7 +235,53 @@ class Warnet(BaseWarnet):
             connection.close()
         return None
 
+    def generate_nomor_pelanggan(self):
+        import re
+        connection = self._get_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT nomor_pelanggan FROM pelanggan")
+                rows = cursor.fetchall()
+                
+                existing_numbers = set()
+                max_num = 0
+                
+                for row in rows:
+                    no_plg = row['nomor_pelanggan']
+                    if no_plg:
+                        existing_numbers.add(no_plg)
+                        digits = re.findall(r'\d+', no_plg)
+                        if digits:
+                            num = int(digits[-1])
+                            if num > max_num:
+                                max_num = num
+
+                next_num = max_num + 1
+                candidate = f"PLG-{next_num:03d}"
+                
+                while candidate in existing_numbers:
+                    next_num += 1
+                    candidate = f"PLG-{next_num:03d}"
+                    
+                return candidate
+        finally:
+            connection.close()
+
     def tambah_pelanggan(self, nama_pelanggan, nomor_pelanggan, jenis_pelanggan):
+        if not nomor_pelanggan or not nomor_pelanggan.strip():
+            nomor_pelanggan = self.generate_nomor_pelanggan()
+        else:
+            nomor_pelanggan = nomor_pelanggan.strip()
+            # Double-check uniqueness to prevent collision
+            connection = self._get_connection()
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT id FROM pelanggan WHERE nomor_pelanggan = %s", (nomor_pelanggan,))
+                    if cursor.fetchone():
+                        nomor_pelanggan = self.generate_nomor_pelanggan()
+            finally:
+                connection.close()
+
         connection = self._get_connection()
         try:
             if jenis_pelanggan == 'Member':

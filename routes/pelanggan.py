@@ -10,24 +10,31 @@ def index():
 
 @pelanggan_bp.route('/tambah', methods=['GET', 'POST'])
 def tambah():
+    warnet = current_app.warnet_system
     if request.method == 'POST':
         nama_pelanggan = request.form.get('nama_pelanggan', '').strip()
         nomor_pelanggan = request.form.get('nomor_pelanggan', '').strip()
         jenis_pelanggan = request.form.get('jenis_pelanggan', '').strip()
 
-        if not nama_pelanggan or not nomor_pelanggan or not jenis_pelanggan:
-            flash('Semua data harus diisi', 'danger')
-            return render_template('pelanggan/tambah.html')
+        if not nama_pelanggan or not jenis_pelanggan:
+            flash('Nama dan Jenis Pelanggan harus diisi', 'danger')
+            next_nomor = warnet.generate_nomor_pelanggan()
+            return render_template('pelanggan/tambah.html', next_nomor_pelanggan=next_nomor)
 
-        warnet = current_app.warnet_system
+        if not nomor_pelanggan:
+            nomor_pelanggan = warnet.generate_nomor_pelanggan()
+
         try:
             warnet.tambah_pelanggan(nama_pelanggan, nomor_pelanggan, jenis_pelanggan)
             flash('Pelanggan baru berhasil ditambahkan', 'success')
             return redirect(url_for('pelanggan.index'))
         except Exception as e:
             flash(f'Gagal menambahkan pelanggan: {str(e)}', 'danger')
+            next_nomor = warnet.generate_nomor_pelanggan()
+            return render_template('pelanggan/tambah.html', next_nomor_pelanggan=next_nomor)
 
-    return render_template('pelanggan/tambah.html')
+    next_nomor = warnet.generate_nomor_pelanggan()
+    return render_template('pelanggan/tambah.html', next_nomor_pelanggan=next_nomor)
 
 @pelanggan_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
