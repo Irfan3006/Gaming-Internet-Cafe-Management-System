@@ -44,6 +44,13 @@ def simpan_kontak():
             'message': f'Gagal menyimpan pesan: {str(e)}'
         }), 500
 
+def get_client_ip():
+    if request.headers.get('X-Forwarded-For'):
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    elif request.headers.get('X-Real-IP'):
+        return request.headers.get('X-Real-IP').strip()
+    return request.remote_addr or '127.0.0.1'
+
 @dashboard_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('logged_in'):
@@ -58,7 +65,7 @@ def login():
             session['logged_in'] = True
             session['username'] = 'admin'
             warnet = current_app.warnet_system
-            warnet.catat_log('admin', 'LOGIN', 'Auth', 'Administrator berhasil login ke sistem', request.remote_addr)
+            warnet.catat_log('admin', 'LOGIN', 'Auth', 'Administrator berhasil login ke sistem', get_client_ip())
             return redirect(url_for('dashboard.index'))
         else:
             error = 'Username atau Password salah!'
@@ -69,7 +76,7 @@ def login():
 def logout():
     warnet = current_app.warnet_system
     if session.get('logged_in'):
-        warnet.catat_log(session.get('username', 'admin'), 'LOGOUT', 'Auth', 'Administrator keluar dari sistem', request.remote_addr)
+        warnet.catat_log(session.get('username', 'admin'), 'LOGOUT', 'Auth', 'Administrator keluar dari sistem', get_client_ip())
     session.pop('logged_in', None)
     session.pop('username', None)
     return redirect(url_for('dashboard.landing'))
